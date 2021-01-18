@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for,request, redirect
+from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -30,6 +30,12 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/posts')
+def posts():
+    articles = Article.query.order_by(Article.date).all()
+    return render_template('post.html', articles=articles)
+
+
 @app.route('/create-article', methods=['POST', 'GET'])
 def create_article():
     if request.method == 'POST':
@@ -37,7 +43,7 @@ def create_article():
         intro = request.form['intro']
         text = request.form['text']
 
-        article = Article(title=title,intro=intro,text=text)
+        article = Article(title=title, intro=intro, text=text)
         try:
             db.session.add(article)
             db.session.commit()
